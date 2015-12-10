@@ -41,61 +41,85 @@ public class ChildRegistrationServlet extends HttpServlet {
         try {
             HttpSession session = request.getSession(true);
             ReturnStatus returnStatus = new ReturnStatus();
-            String motherName = request.getParameter("motherName");
-            String fatherName = request.getParameter("fatherName");
-            String motherNationality = request.getParameter("motherNationality");
-            String fatherNationality = request.getParameter("fatherNationality");
-            String grandMotherName = request.getParameter("grandMotherName");
-            String grandFatherName = request.getParameter("grandFatherName");
-            String dateofBirth = request.getParameter("dateofBirth");
-            String weight = request.getParameter("weight");
-            String height = request.getParameter("height");
-            String skinColor = request.getParameter("skinColor");
-            String eyeColor = request.getParameter("eyeColor");
-            String country = request.getParameter("country");
-            String city = request.getParameter("city");
-            String hospitalName = request.getParameter("hospitalName");
-            String createdBy = session.getAttribute("user").toString();
-            String userType = session.getAttribute("userType").toString();
 
-            ChildRegistration childRegistration = new ChildRegistration();
-            childRegistration.setMotherName(motherName);
-            childRegistration.setFatherName(fatherName);
-            childRegistration.setDateofBirth(dateofBirth);
-            childRegistration.setCity(city);
-            childRegistration.setCountry(country);
-            childRegistration.setCreatedBy(createdBy);
-            childRegistration.setEyeColor(eyeColor);
-            childRegistration.setSkinColor(skinColor);
-            childRegistration.setFatherNationality(fatherNationality);
-            childRegistration.setMotherNationality(motherNationality);
-            childRegistration.setGrandFatherName(grandFatherName);
-            childRegistration.setGrandMotherName(grandMotherName);
-            childRegistration.setHeight(Double.parseDouble(height));
-            childRegistration.setWeight(Double.parseDouble(weight));
-            childRegistration.setHospital(hospitalName);
-            DBOperations dBOperations = new DBOperations();
-            returnStatus = dBOperations.insertChildRegistration(childRegistration);
-            System.out.println(childRegistration.toString());
-            log.debug("childRegistration :: " + childRegistration.toString());
-            log.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-            log.info("ErrorCode : " + returnStatus.getErrorCode());
-            log.info("StatusCode : " + returnStatus.getStatusCode());
-            log.info("ExceptionMessage : " + returnStatus.getExceptionMessage());
-            log.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
-            log.debug("Return Status :: " + returnStatus.toString());
+            String action = request.getParameter("action") != null ? request.getParameter("action") : "";
 
-            int errorCode = (returnStatus != null ? returnStatus.getErrorCode() : 0);
-            if (errorCode == 1) {
-                request.setAttribute("INFO_MSG", "Successfully Register.");
-                request.getRequestDispatcher("childRegistration.jsp").forward(request, response);
+            if (action.equals("delete")) {
 
-// return;
+                String childRegistrationId = request.getParameter("id") != null ? request.getParameter("id") : "";
+                DBOperations dBOperations = new DBOperations();
+                returnStatus = dBOperations.deleteChildRegistration(childRegistrationId);
+
+                log.debug("childRegistrationDelete :: ID = " + childRegistrationId);
+                log.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                log.info("ErrorCode : " + returnStatus.getErrorCode());
+                log.info("StatusCode : " + returnStatus.getStatusCode());
+                log.info("ExceptionMessage : " + returnStatus.getExceptionMessage());
+                log.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
+                log.debug("Return Status :: " + returnStatus.toString());
+
+                int errorCode = (returnStatus != null ? returnStatus.getErrorCode() : 0);
+                if (errorCode == 1) {
+                    request.setAttribute("INFO_MSG", "Successfully Deleted.");
+                    request.getRequestDispatcher("childRegistration.jsp").forward(request, response);
+                } else {
+                    request.setAttribute("INFO_MSG", returnStatus.getMessage());
+                    request.getRequestDispatcher("childRegistration.jsp").forward(request, response);
+                }
+
             } else {
 
-                request.setAttribute("INFO_MSG", returnStatus.getMessage());
-                request.getRequestDispatcher("childRegistration.jsp").forward(request, response);
-                //  return;
+                String motherName = request.getParameter("motherName");
+                String fatherName = request.getParameter("fatherName");
+                String motherNationality = request.getParameter("motherNationality");
+                String fatherNationality = request.getParameter("fatherNationality");
+                String grandMotherName = request.getParameter("grandMotherName");
+                String grandFatherName = request.getParameter("grandFatherName");
+                String dateofBirth = request.getParameter("dateofBirth");
+                String weight = request.getParameter("weight");
+                String height = request.getParameter("height");
+                String skinColor = request.getParameter("skinColor");
+                String eyeColor = request.getParameter("eyeColor");
+                String country = request.getParameter("country");
+                String city = request.getParameter("city");
+                String hospitalName = request.getParameter("hospitalName");
+                String createdBy = session.getAttribute("user").toString();
+                String userType = session.getAttribute("userType").toString();
+
+                ChildRegistration childRegistration = new ChildRegistration();
+                childRegistration.setMotherName(motherName);
+                childRegistration.setFatherName(fatherName);
+                childRegistration.setDateofBirth(dateofBirth);
+                childRegistration.setCity(city);
+                childRegistration.setCountry(country);
+                childRegistration.setCreatedBy(createdBy);
+                childRegistration.setEyeColor(eyeColor);
+                childRegistration.setSkinColor(skinColor);
+                childRegistration.setFatherNationality(fatherNationality);
+                childRegistration.setMotherNationality(motherNationality);
+                childRegistration.setGrandFatherName(grandFatherName);
+                childRegistration.setGrandMotherName(grandMotherName);
+                childRegistration.setHeight(Double.parseDouble(height));
+                childRegistration.setWeight(Double.parseDouble(weight));
+                childRegistration.setHospital(hospitalName);
+                DBOperations dBOperations = new DBOperations();
+                returnStatus = dBOperations.insertChildRegistration(childRegistration);
+                System.out.println(childRegistration.toString());
+                log.debug("childRegistration :: " + childRegistration.toString());
+                log.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                log.info("ErrorCode : " + returnStatus.getErrorCode());
+                log.info("StatusCode : " + returnStatus.getStatusCode());
+                log.info("ExceptionMessage : " + returnStatus.getExceptionMessage());
+                log.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
+                log.debug("Return Status :: " + returnStatus.toString());
+                int errorCode = (returnStatus != null ? returnStatus.getErrorCode() : 0);
+                if (errorCode == 1) {
+                    request.setAttribute("INFO_MSG", "Successfully Register.");
+                    request.getRequestDispatcher("childRegistration.jsp").forward(request, response);
+                } else {
+                    request.setAttribute("INFO_MSG", returnStatus.getMessage());
+                    request.getRequestDispatcher("childRegistration.jsp").forward(request, response);
+                }
             }
 
         } catch (Exception ex) {

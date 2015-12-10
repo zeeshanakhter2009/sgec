@@ -243,7 +243,7 @@
                                 </td> 
                                 <td data-title="Hospital"><%=childRegistrationList.get(i).getHospital()%>
                                 </td> 
-                                <td data-title="Hospital"><a href="#" >Edit</a> <a href="#" >Delete</a>
+                                <td data-title="Hospital"><a href="#" >Edit</a> <a href="ChildRegistrationServlet?action=delete&id=<%=childRegistrationList.get(i).getBirthDetailsId()%>" >Delete</a>
                                 </td> 
 <!--                                <td data-title="Status"><%=childRegistrationList.get(i).getStatus()%>
                                 </td> <td data-title="Register Date"><%=childRegistrationList.get(i).getCreatedDate()%>

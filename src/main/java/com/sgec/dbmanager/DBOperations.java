@@ -10,6 +10,7 @@ package com.sgec.dbmanager;
  * @author ZA
  */
 import com.sgec.model.ChildRegistration;
+import com.sgec.model.DeathRegistration;
 import com.sgec.model.User;
 import com.sgec.utility.ReturnStatus;
 import java.sql.Connection;
@@ -190,6 +191,204 @@ public class DBOperations {
         return returnStatus;
     }
 
+    /**
+     * **
+     *
+     * @param deathRegistration
+     * @return
+     */
+    public ReturnStatus insertDeathRegistration(DeathRegistration deathRegistration) {
+
+        Connection con = null;
+        PreparedStatement pst = null;
+        ResultSet keys = null;
+        int key = 0;
+        ReturnStatus returnStatus = new ReturnStatus();
+        DbManager db = DbManager.getInstance();
+
+        try {
+
+            String query = "INSERT INTO deathdetails "
+                    + "(citizenId, country, city, placeOfDeath, address, hospitalName, other, "
+                    + "DateOfDeath, ReasonOfDeath, diseaseName, accidentDetails, status, createdDate, modifiedDate, createdBy) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '1', NOW(), NOW(), ?);";
+
+            con = (Connection) db.getJNDIConnection();
+
+            pst = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            log.debug("insertDeathRegistration ::::::: \n " + query);
+
+            pst.setInt(1, deathRegistration.getCitizenId());
+            pst.setString(2, deathRegistration.getCountry());
+            pst.setString(3, deathRegistration.getCity());
+            pst.setString(4, deathRegistration.getPlaceOfDeath());
+            pst.setString(5, deathRegistration.getAddress());
+            pst.setString(6, deathRegistration.getHospitalName());
+            pst.setString(7, deathRegistration.getOther());
+            pst.setString(8, deathRegistration.getDateOfDeath());
+            pst.setString(9, deathRegistration.getReasonOfDeath());
+            pst.setString(10, deathRegistration.getDiseaseName());
+            pst.setString(11, deathRegistration.getAccidentDetails());
+            pst.setString(12, deathRegistration.getCreatedBy());
+
+            int out = pst.executeUpdate();
+            keys = pst.getGeneratedKeys();
+
+            while (keys.next()) {
+                key = keys.getInt(1);
+            }
+
+            if (out != 0) {
+                deathRegistration.setDeathDetailsId(key);
+                log.debug("Record Saved");
+                returnStatus.setErrorCode(1);
+                returnStatus.setStatusCode("Y");
+                returnStatus.setObject(deathRegistration);
+                returnStatus.setLastInsertedId(key);
+            } else {
+                log.debug("Record not Saved");
+                returnStatus.setErrorCode(0);
+                returnStatus.setStatusCode("N");
+                returnStatus.setLastInsertedId(key);
+            }
+
+        } catch (Exception e) {
+            returnStatus.setExceptionMessage(e.getMessage());
+            e.printStackTrace();
+            log.debug("Exception :: ", e);
+        } finally {
+            try {
+                pst.close();
+                db.closeJNDIConnection(con);
+            } catch (Exception ex) {
+                returnStatus.setExceptionMessage(ex.getMessage());
+                ex.printStackTrace();
+                log.debug("Exception :: ", ex);
+            }
+        }
+        return returnStatus;
+    }
+    
+    
+    public ReturnStatus deleteDeathRegistration(String deathRegistrationId) {
+
+        Connection con = null;
+        PreparedStatement pst = null;
+        ResultSet keys = null;
+        int key = 0;
+        ReturnStatus returnStatus = new ReturnStatus();
+        DbManager db = DbManager.getInstance();
+
+        try {
+
+            String query = "UPDATE deathdetails SET status='0', modifiedDate = NOW() WHERE deathDetailsId = ? ;";
+
+            con = (Connection) db.getJNDIConnection();
+
+            pst = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            log.debug("deleteDeathRegistration ::::::: \n " + query);
+
+            pst.setString(1, deathRegistrationId);
+
+            int out = pst.executeUpdate();
+            keys = pst.getGeneratedKeys();
+
+            while (keys.next()) {
+                key = keys.getInt(1);
+            }
+
+            if (out != 0) {
+               
+                log.debug("Record Deleted");
+                returnStatus.setErrorCode(1);
+                returnStatus.setStatusCode("Y");
+                returnStatus.setLastInsertedId(key);
+            } else {
+                log.debug("Record not Saved");
+                returnStatus.setErrorCode(0);
+                returnStatus.setStatusCode("N");
+                returnStatus.setLastInsertedId(key);
+            }
+
+        } catch (Exception e) {
+            returnStatus.setExceptionMessage(e.getMessage());
+            e.printStackTrace();
+            log.debug("Exception :: ", e);
+        } finally {
+            try {
+                pst.close();
+                db.closeJNDIConnection(con);
+            } catch (Exception ex) {
+                returnStatus.setExceptionMessage(ex.getMessage());
+                ex.printStackTrace();
+                log.debug("Exception :: ", ex);
+            }
+        }
+        return returnStatus;
+    }
+    
+    /*******
+     * 
+     * @param childRegistrationId
+     * @return 
+     */
+    public ReturnStatus deleteChildRegistration(String childRegistrationId) {
+
+        Connection con = null;
+        PreparedStatement pst = null;
+        ResultSet keys = null;
+        int key = 0;
+        ReturnStatus returnStatus = new ReturnStatus();
+        DbManager db = DbManager.getInstance();
+
+        try {
+
+            String query = "UPDATE birthdetails SET status='0', modifiedDate = NOW() WHERE birthDetailsId = ? ;";
+
+            con = (Connection) db.getJNDIConnection();
+
+            pst = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            log.debug("deleteDeathRegistration ::::::: \n " + query);
+
+            pst.setString(1, childRegistrationId);
+
+            int out = pst.executeUpdate();
+            keys = pst.getGeneratedKeys();
+
+            while (keys.next()) {
+                key = keys.getInt(1);
+            }
+
+            if (out != 0) {
+               
+                log.debug("Record Deleted");
+                returnStatus.setErrorCode(1);
+                returnStatus.setStatusCode("Y");
+                returnStatus.setLastInsertedId(key);
+            } else {
+                log.debug("Record not Saved");
+                returnStatus.setErrorCode(0);
+                returnStatus.setStatusCode("N");
+                returnStatus.setLastInsertedId(key);
+            }
+
+        } catch (Exception e) {
+            returnStatus.setExceptionMessage(e.getMessage());
+            e.printStackTrace();
+            log.debug("Exception :: ", e);
+        } finally {
+            try {
+                pst.close();
+                db.closeJNDIConnection(con);
+            } catch (Exception ex) {
+                returnStatus.setExceptionMessage(ex.getMessage());
+                ex.printStackTrace();
+                log.debug("Exception :: ", ex);
+            }
+        }
+        return returnStatus;
+    }
+
     public List<ChildRegistration> getChildRegistrationList() {
         Connection con = null;
 
@@ -252,6 +451,61 @@ public class DBOperations {
 
                 // uploadDetails.toString();
                 list.add(childRegistration);
+            }
+        } catch (Exception e) {
+            // System.out.println(e.getMessage());
+            log.debug("Exception :: ", e);
+        } finally {
+            try {
+                ps.close();
+                db.closeJNDIConnection(con);
+            } catch (Exception ex) {
+                //  System.err.println(ex.getMessage());
+                log.debug("Exception :: ", ex);
+            }
+        }
+        //   System.out.println(count + "  ==count \n" + "List Size==== " + list.size());
+        return list;
+    }
+
+    public List<DeathRegistration> getDeathRegistrationList() {
+        Connection con = null;
+
+        PreparedStatement ps = null;
+        List<DeathRegistration> list = new ArrayList<DeathRegistration>();
+        int count = 0;
+        DbManager db = DbManager.getInstance();
+        try {
+            String query = "SELECT deathDetailsId, citizenId, country, city, placeOfDeath, address, hospitalName, other, DateOfDeath, ReasonOfDeath, diseaseName, "
+                    + "accidentDetails, status, createdDate, modifiedDate, createdBy FROM deathdetails where status='1' order by deathDetailsId desc;";
+
+            con = (Connection) db.getJNDIConnection();
+            ps = con.prepareStatement(query);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                count++;
+                DeathRegistration deathRegistration = new DeathRegistration();
+               
+                deathRegistration.setDeathDetailsId(rs.getInt("deathDetailsId"));
+                deathRegistration.setCitizenId(rs.getInt("citizenId"));
+                deathRegistration.setCountry(rs.getString("country"));
+                deathRegistration.setCity(rs.getString("city"));
+                deathRegistration.setPlaceOfDeath(rs.getString("placeOfDeath"));
+                deathRegistration.setAddress(rs.getString("address"));
+                deathRegistration.setHospitalName(rs.getString("hospitalName"));
+                deathRegistration.setOther(rs.getString("other"));
+                deathRegistration.setDateOfDeath(rs.getString("DateOfDeath"));
+                deathRegistration.setReasonOfDeath(rs.getString("ReasonOfDeath"));
+                deathRegistration.setDiseaseName(rs.getString("diseaseName"));
+                deathRegistration.setAccidentDetails(rs.getString("accidentDetails"));
+                deathRegistration.setStatus(rs.getString("status"));
+                deathRegistration.setCreatedDate(rs.getString("createdDate"));
+                deathRegistration.setModifiedDate(rs.getString("modifiedDate"));
+                deathRegistration.setCreatedBy(rs.getString("createdBy"));
+                
+                // uploadDetails.toString();
+                list.add(deathRegistration);
             }
         } catch (Exception e) {
             // System.out.println(e.getMessage());
